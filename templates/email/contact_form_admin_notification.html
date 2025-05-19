@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Новое сообщение с сайта</title>
+</head>
+<body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
+    <div style="background-color: #f8f9fa; padding: 20px; border-radius: 5px; border-top: 4px solid #007bff;">
+        <h2 style="color: #007bff;">Новое сообщение с сайта</h2>
+        
+        <p>Получено новое сообщение через контактную форму на сайте.</p>
+        
+        <div style="background-color: #ffffff; padding: 15px; border-radius: 5px; margin: 20px 0;">
+            <h3 style="margin-top: 0;">Информация о сообщении:</h3>
+            <p><strong>Дата и время:</strong> {{ timestamp }}</p>
+            <p><strong>Имя:</strong> {{ name }}</p>
+            <p><strong>Email:</strong> {{ email }}</p>
+            {% if phone %}
+            <p><strong>Телефон:</strong> {{ phone }}</p>
+            {% endif %}
+            {% if organization %}
+            <p><strong>Организация:</strong> {{ organization }}</p>
+            {% endif %}
+            <p><strong>Сообщение:</strong><br>{{ message }}</p>
+        </div>
+        
+        <p>Пожалуйста, свяжитесь с отправителем в ближайшее время.</p>
+    </div>
+    
+    <div style="text-align: center; margin-top: 20px; font-size: 12px; color: #6c757d;">
+        <p>Это автоматическое сообщение от системы {{ site_name }}.</p>
+        <p>&copy; {{ site_name }} {{ current_year }}</p>
+    </div>
+</body>
+</html>

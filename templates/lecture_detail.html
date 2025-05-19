@@ -1,0 +1,126 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ lecture.title }} - Биолекторий-Зоологический Музей МГУ{% endblock %}
+
+{% block content %}
+    <div class="lecture-detail-page container-fluid mb-4 mt-4">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{{ url_for('main.index') }}">Главная</a></li>
+                <li class="breadcrumb-item"><a href="{{ url_for('main.sections') }}">Разделы лекций</a></li>
+                <li class="breadcrumb-item"><a
+                        href="{{ url_for('main.section_detail', slug=lecture.section.slug) }}">{{ lecture.section.name }}</a>
+                </li>
+                <li class="breadcrumb-item active" aria-current="page">{{ lecture.title }}</li>
+            </ol>
+        </nav>
+
+        <div class="lecture-header mb-4">
+            <h1 class="mb-2">{{ lecture.title }}</h1>
+            {% if lecture.subtitle %}
+                <h2 class="h4 text-muted mb-3">{{ lecture.subtitle }}</h2>
+            {% endif %}
+
+            {#        <div class="lecture-meta mb-3">#}
+            {#            <span class="badge bg-primary me-2">{{ lecture.lecture_type.name }}</span>#}
+            {#            <span class="badge bg-secondary me-2">{{ lecture.section.name }}</span>#}
+            {#        </div>#}
+        </div>
+
+        {% if lecture.image %}
+            <div class="lecture-image mb-4">
+                <img src="{{ url_for('static', filename='uploads/lectures/' + lecture.image) }}"
+                     class="img-fluid rounded"
+                     alt="{{ lecture.title }}">
+            </div>
+        {% endif %}
+
+        <div class="lecture-description mb-4">
+            <h3>Описание</h3>
+            <div>{{ lecture.content|safe  }}</div>
+        </div>
+
+{#        {% if lecture.content %}#}
+{#            <div class="lecture-content mb-4">#}
+{#                <h3>Содержание лекции</h3>#}
+{#                <div>{{ lecture.content|safe }}</div>#}
+{#            </div>#}
+{#        {% endif %}#}
+
+        <div class="lecture-actions mt-5">
+{#            <a href="{{ url_for('main.order_lecture', lecture_id=lecture.id) }}" class="btn btn-primary btn-lg">Заказать#}
+{#                эту лекцию</a>#}
+            <a href="{{ url_for('main.section_detail', slug=lecture.section.slug) }}"
+               class="btn btn-outline-secondary ms-2">Вернуться к разделу</a>
+            {% if session['is_admin'] or session['is_editor'] %}
+                <a href="/admin/lecture/edit/?id={{ lecture.id }}&url=/admin/lecture/"
+                   class="btn btn-outline-danger">Редактировать</a>
+            {% endif %}
+        </div>
+
+        <hr class="my-5">
+
+        <div class="related-lectures my-5">
+            <h3 class="mb-4">Другие лекции в разделе</h3>
+            <div id="carouselRelatedLectures" class="carousel slide" data-bs-ride="carousel">
+                <!-- Индикаторы -->
+                <div class="carousel-indicators">
+                    {% for idx in range((lecture.section.lectures.filter_by(is_active=True).count() - 1) // 3 + 1) %}
+                        <button type="button" data-bs-target="#carouselRelatedLectures" data-bs-slide-to="{{ idx }}"
+                                {% if idx == 0 %}class="active"{% endif %} aria-current="true"
+                                aria-label="Slide {{ idx + 1 }}"></button>
+                    {% endfor %}
+                </div>
+
+                <!-- Слайды -->
+                <div class="carousel-inner">
+                    {% set lectures = lecture.section.lectures.filter_by(is_active=True).all() %}
+                    {% for i in range(0, lectures|length, 3) %}
+                        <div class="carousel-item {% if i == 0 %}active{% endif %}">
+                            <div class="row">
+                                {% for related_lecture in lectures[i:i+3] %}
+
+                                    {% if related_lecture.id != lecture.id %}
+                                        <div class="col-md-4">
+                                            <div class="card h-100">
+                                                {% if related_lecture.image %}
+                                                    <img src="{{ url_for('static', filename='uploads/lectures/' + related_lecture.image) }}"
+                                                         class="card-img-top" alt="{{ related_lecture.title }}">
+                                                {% endif %}
+                                                <div class="card-body">
+                                                    <h5 class="card-title">{{ related_lecture.title }}</h5>
+                                                    <p class="card-text">{{ related_lecture.description|truncate(100) }}</p>
+                                                    <a href="{{ url_for('main.lecture_detail', slug=related_lecture.slug) }}"
+                                                       class="btn btn-sm btn-primary">Подробнее</a>
+                                                    {% if session['is_admin'] or session['is_editor']%}
+                                                        <a href="/admin/lecture/edit/?id={{ related_lecture.id }}&url=/admin/lecture/"
+                                                           class="btn btn-outline-danger">Редактировать</a>
+                                                    {% endif %}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+
+                <!-- Навигация -->
+                <div class="mt-3">
+                    <button style="width: 100px; height: 100px;" class="carousel-control-prev" type="button" data-bs-target="#carouselRelatedLectures"
+                            data-bs-slide="prev">
+                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Предыдущий</span>
+                    </button>
+                    <button style="width: 100px; height: 100px;" class="carousel-control-next" type="button" data-bs-target="#carouselRelatedLectures"
+                            data-bs-slide="next">
+                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Следующий</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

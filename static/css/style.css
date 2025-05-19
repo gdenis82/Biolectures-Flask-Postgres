@@ -1,0 +1,324 @@
+/* Custom styles for Biolectures MSU website */
+.custom-green {
+    background-color: rgb(49,80,1);
+    color: white;
+}
+.custom-dark-transparent {
+    background-color: rgba(0, 0, 0, 0.05);
+    color: white;
+}
+
+.custom-btn-ticket {
+    background-color: transparent;
+    color: #007bff;
+}
+.disabled-link {
+    pointer-events: none;
+    color: gray; /* Цвет текста для визуального отображения */
+    text-decoration: none; /* Убирает подчеркивание */
+    opacity: 0.5; /* Дает визуальный эффект "заблокированного элемента" */
+}
+
+
+/* Global styles */
+body {
+    font-family: 'Roboto', sans-serif;
+    color: #333;
+
+    padding-top: 66px; /* Убедитесь, что значение соответствует высоте вашего меню */
+    background-color: rgba(248, 249, 250, 0.50);
+
+
+}
+
+a {
+    color: #007bff;
+    transition: color 0.3s;
+}
+
+a:hover {
+    color: #0056b3;
+    text-decoration: none;
+}
+
+/* Header styles */
+header {
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.navbar-brand {
+    font-weight: 700;
+}
+
+.navbar.fixed-top {
+    background-color: rgba(255, 255, 255, 0.9); /* Полупрозрачный белый фон */
+    backdrop-filter: blur(5px); /* Эффект размытия для прозрачного фона */
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1); /* Тень для отделения меню */
+    width: 100%; /* Гарантия, что меню занимает всю ширину экрана */
+    z-index: 999999999; /* Чтобы меню отображалось поверх другого контента */
+    left: 0; /* Для поддержки фиксированного положения */
+    right: 0; /* Дополнение для всей ширины экрана */
+    position: fixed;
+
+
+}
+
+
+/* Полу-прозрачный черный фон для всплывающего окна */
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7); /* Полупрозрачный черный фон */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999; /* Поверх всего остального контента */
+}
+
+/* Стиль для всплывающего сообщения */
+.popup {
+    background-color: #fff; /* Белый фон для сообщений */
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    max-width: 90%;
+    text-align: center;
+}
+
+/* Адаптация стилей для самих alert-сообщений */
+.alert {
+    margin-bottom: 10px; /* Отступы между сообщениями */
+    font-size: 16px;
+}
+
+
+/* Hero section */
+.hero-section {
+    padding: 80px 0;
+
+    position: relative;
+
+    /* эти два — чтобы фон был по центру и покрывал весь блок */
+    background-size: cover;
+    background-position: center center;
+}
+
+.hero-section.with-image {
+    /* делаем фиксированный фон для параллакса */
+    background-attachment: fixed;
+
+    /* ваши существующие настройки для текста на фоне */
+    color: white;
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
+}
+
+.hero-section.with-image::before {
+    content: '';
+    position: absolute;
+    inset: 0; /* shorthand для top/left/right/bottom = 0 */
+    background: rgba(0, 0, 0, 0.1);
+    z-index: 1;
+}
+
+.hero-section.with-image .container {
+    position: relative;
+    z-index: 2;
+}
+
+
+/* Card styles */
+.card {
+    transition: transform 0.3s, box-shadow 0.3s;
+    margin-bottom: 20px;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+}
+
+.card-img-top {
+    height: 200px;
+    object-fit: cover;
+}
+
+/* Section styles */
+.section-header {
+    margin-bottom: 40px;
+}
+
+.section-image img {
+    max-height: 400px;
+    object-fit: cover;
+    width: 100%;
+}
+
+/* Lecture styles */
+.lecture-meta {
+    margin-bottom: 15px;
+}
+
+.lecture-image img {
+    max-height: 500px;
+    object-fit: cover;
+    width: 100%;
+}
+
+/* Footer styles */
+footer {
+    margin-top: 60px;
+}
+
+/* Error pages */
+.error-page {
+    padding: 100px 0;
+}
+
+.error-page h1 {
+    font-size: 120px;
+    font-weight: 700;
+    color: #007bff;
+}
+/*Разделитель*/
+.wrapper
+{
+  padding-bottom: 90px;
+}
+
+.divider
+{
+  position: relative;
+  margin-top: 0;
+  height: 1px;
+}
+
+.div-transparent:before
+{
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 5%;
+  right: 5%;
+  width: 90%;
+  height: 1px;
+  background-image: linear-gradient(to right, transparent, rgb(48,49,51), transparent);
+}
+
+.div-arrow-down:after
+{
+  content: "";
+  position: absolute;
+  z-index: 99;
+  top: -7px;
+  left: calc(50% - 7px);
+  width: 14px;
+  height: 14px;
+  transform: rotate(45deg);
+  background-color: white;
+  border-bottom: 1px solid rgb(48,49,51);
+  border-right: 1px solid rgb(48,49,51);
+}
+
+.div-tab-down:after
+{
+  content: "";
+  position: absolute;
+  z-index: 99;
+  top: 0;
+  left: calc(50% - 10px);
+  width: 20px;
+  height: 14px;
+  background-color: white;
+  border-bottom: 1px solid rgb(48,49,51);
+  border-left: 1px solid rgb(48,49,51);
+  border-right: 1px solid rgb(48,49,51);
+  border-radius: 0 0 8px 8px;
+}
+
+.div-stopper:after
+{
+  content: "";
+  position: absolute;
+  z-index: 99;
+  top: -6px;
+  left: calc(50% - 7px);
+  width: 14px;
+  height: 12px;
+  background-color: white;
+  border-left: 1px solid rgb(48,49,51);
+  border-right: 1px solid rgb(48,49,51);
+}
+
+.div-dot:after
+{
+  content: "";
+  position: absolute;
+  z-index: 99;
+  top: -9px;
+  left: calc(50% - 9px);
+  width: 18px;
+  height: 18px;
+  background-color: goldenrod;
+  border: 1px solid rgb(48,49,51);
+  border-radius: 50%;
+  box-shadow: inset 0 0 0 2px white,
+          0 0 0 4px white;
+}
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .hero-section {
+        padding: 40px 0;
+    }
+
+    .card-img-top {
+        height: 150px;
+    }
+
+    .section-image img,
+    .lecture-image img {
+        max-height: 300px;
+    }
+    .navbar.fixed-top {
+        font-size: 0.9rem; /* Меньше текст для мобильных */
+        padding-left: 0.5rem;
+        padding-right: 0.5rem;
+    }
+
+
+    .small-card {
+        flex-direction: column; /* Flex-контейнер в колонку */
+    }
+    .small-card .col-md-4 {
+        flex: 0 0 auto;
+        max-height: 250px; /* Ограничение высоты блока с изображением */
+        height: 250px;    /* Прямо устанавливаем высоту */
+    }
+    .small-card img {
+        object-fit: cover; /* Изображение обрезается так, чтобы вписаться */
+        height: 100%; /* Изображение занимает всю высоту родителя */
+        max-height: 250px;
+        width: 100%; /* Растягивание по ширине */
+    }
+    .small-card .col-md-8 {
+        padding: 15px; /* Немного снижена отступы */
+    }
+    .small-card .card-title {
+        font-size: 1rem;
+        line-height: 1.2; /* Меньше высота строк заголовка */
+        margin-bottom: 0.5rem;
+    }
+    .small-card .card-subtitle {
+        font-size: 0.9rem;
+    }
+    .small-card .card-text {
+        font-size: 0.85rem; /* Уменьшаем текст описания для мобильных */
+        line-height: 1.4;
+    }
+    .small-card .btn {
+        font-size: 0.85rem; /* Уменьшаем кнопки для мобильных */
+        padding: 5px 10px;  /* Меньше свободного пространства */
+    }
+}

@@ -1,0 +1,128 @@
+<section id="faq"
+class="hero-section container-fluid px-0  {% if block.image %}with-image{% endif %}"
+    {% if block.image %}
+    style="background-image: url('{{ url_for('static', filename='uploads/blocks/' + block.image) }}');"
+         {% else %}
+         style="background-color: #f8f9fa;"
+    {% endif %} >
+  <div  class="container faq-list py-5">
+        <div class="text-center mb-5">
+            <h1 class="display-6">{{ block.title }}</h1>
+        </div>
+
+
+    <details>
+      <summary>Что необходимо для проведения лекции?</summary>
+      <p>Мы проводим лекции в классах, нам необходим белый экран/доска. Если у вас есть проектор или интерактивная доска — воспользуемся ими, если нет — привезём свой проектор.</p>
+    </details>
+
+    <details>
+      <summary>Если заказаны лекции на целую параллель, тема должна быть одинаковой?</summary>
+      <p>Темы можно выбирать разные для каждого класса.</p>
+    </details>
+
+    <details>
+      <summary>Можно ли пригласить лектора к разным параллелям в один день?</summary>
+      <p>Мы можем приехать к первому и одиннадцатому классу в один день.</p>
+    </details>
+
+    <details>
+      <summary>Если возраст для темы указан "от 5 лет" — будет ли интересно 6 классу?</summary>
+      <p>Мы адаптируем любую лекцию для старшего возраста, так что можно выбирать любые темы, включая "от 5 лет".</p>
+    </details>
+
+    <details>
+      <summary>Как выбрать тему?</summary>
+      <p>Для 1 класса или при первом приглашении советуем выбрать темы "от 5 лет". Покажите их преподавателю, выберите 4–5 интересных — мы подскажем, с какой начать.</p>
+    </details>
+
+    <details>
+      <summary>Сколько длится лекция?</summary>
+      <p>45 минут, как обычный урок.</p>
+    </details>
+
+    <details>
+      <summary>Во сколько вы можете приехать в школу?</summary>
+      <p>Время выбираете вы. При заказе от 3 лекций — в любое время. При заказе 1–2 лекций — со 2-го урока.</p>
+    </details>
+
+    <details>
+      <summary>Можно ли распланировать лекции на весь год?</summary>
+      <p>К сожалению, нет — у лекторов плавающий график, выезды на конференции и экспедиции.</p>
+    </details>
+
+    <details>
+      <summary>Есть у лекторов медицинские книжки?</summary>
+      <p>Да, у всех лекторов есть медицинские книжки.</p>
+    </details>
+
+    <details>
+      <summary>Как можно оплатить лекцию?</summary>
+      <p>Оплата по факту — наличными или переводом на карту Сбербанка по договорённости с лектором. Квитанция прилагается.</p>
+    </details>
+
+    <details>
+      <summary>Есть ли у вас лицензия?</summary>
+      <p>Да, у нас есть лицензия. Её можно скачать в разделе «Документы». Все лекторы — выпускники МГУ или МПГУ, их дипломы дают право на преподавание.</p>
+    </details>
+
+  </div>
+    <div class="row d-flex align-items-center justify-content-center mt-4 mb-4">
+            <div class="col-md-10 text-center">
+                {% if session['is_admin'] or session['is_editor']%}
+                    <a href="/admin/homeblock/edit/?id={{ block.id }}&url=/admin/homeblock/"
+                       class="btn btn-outline-danger">Редактировать</a>
+                {% endif %}
+            </div>
+        </div>
+
+</section>
+
+<style>
+  .faq-list {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 1rem;
+  }
+
+  details {
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    padding: 0.5rem 1rem;
+    margin-bottom: 10px;
+    background: #f9f9f9;
+    transition: background 0.3s ease;
+  }
+
+  details[open] {
+    background: #eef5ff;
+  }
+
+  summary {
+    cursor: pointer;
+    font-weight: bold;
+    position: relative;
+    padding-right: 2rem;
+    list-style: none;
+  }
+
+  summary::-webkit-details-marker {
+    display: none;
+  }
+
+  summary::after {
+    content: '+';
+    position: absolute;
+    right: 0;
+    font-size: 1.2rem;
+    transition: transform 0.3s ease;
+  }
+
+  details[open] summary::after {
+    content: '−';
+  }
+
+  details p {
+    margin: 0.5rem 0 0 0;
+  }
+</style>

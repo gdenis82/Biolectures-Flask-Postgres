@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ section.name }} - Биолекторий-Зоологический Музей МГУ{% endblock %}
+
+{% block content %}
+<div class="section-detail-page container-fluid mb-4 mt-4">
+    <div class="section-header mb-4">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{{ url_for('main.index') }}">Главная</a></li>
+                <li class="breadcrumb-item"><a href="{{ url_for('main.sections') }}">Разделы лекций</a></li>
+                <li class="breadcrumb-item active" aria-current="page">{{ section.name }}</li>
+            </ol>
+        </nav>
+
+        <h1 class="mb-3">{{ section.name }}</h1>
+
+        {% if section.image %}
+        <div class="section-image mb-3">
+            <img src="{{ url_for('static', filename='uploads/sections/' + section.image) }}" class="img-fluid rounded" alt="{{ section.name }}">
+        </div>
+        {% endif %}
+
+        <div class="section-description mb-4">
+            <p>{{ section.description }}</p>
+        </div>
+    </div>
+
+    <h2 class="mb-3">Лекции в разделе</h2>
+
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+        {% for lecture in lectures %}
+        <div class="col">
+            <div class="card h-100">
+                {% if lecture.image %}
+                <img src="{{ url_for('static', filename='uploads/lectures/' + lecture.image) }}" class="card-img-top" alt="{{ lecture.title }}">
+                {% endif %}
+                <div class="card-body">
+                    <h5 class="card-title">{{ lecture.title }}</h5>
+                    {% if lecture.subtitle %}
+                    <h6 class="card-subtitle mb-2 text-muted">{{ lecture.subtitle }}</h6>
+                    {% endif %}
+                    <p class="card-text">{{ lecture.description|truncate(150) }}</p>
+                </div>
+                <div class="card-footer bg-transparent border-top-0">
+                    <a href="{{ url_for('main.lecture_detail', slug=lecture.slug) }}" class="btn btn-primary">Подробнее</a>
+{#                    <a href="{{ url_for('main.order_lecture', lecture_id=lecture.id) }}" class="btn btn-outline-primary">Заказать</a>#}
+                    {% if session['is_admin'] or session['is_editor']%}
+                        <a href="/admin/lecture/edit/?id={{ lecture.id }}&url=/admin/lecture/" class="btn btn-outline-danger">Редактировать</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% else %}
+        <div class="col-12">
+            <div class="alert alert-info">
+                <p>В этом разделе пока нет лекций. Пожалуйста, посетите сайт позже.</p>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

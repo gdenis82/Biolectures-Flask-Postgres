@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Биолекторий - Зоологический Музей МГУ{% endblock %}</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" sizes="16x16" href="/static/img/favicon-16x16.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/static/img/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="48x48" href="/static/img/favicon-48x48.png">
+    <link rel="icon" type="image/png" sizes="64x64" href="/static/img/favicon-64x64.png">
+    <link rel="icon" type="image/png" sizes="96x96" href="/static/img/favicon-96x96.png">
+    <link rel="icon" type="image/png" sizes="128x128" href="/static/img/favicon-128x128.png">
+    <link rel="icon" type="image/png" sizes="152x152" href="/static/img/favicon-152x152.png">
+    <link rel="icon" type="image/png" sizes="180x180" href="/static/img/favicon-180x180.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="/static/img/favicon-192x192.png">
+    <link rel="icon" type="image/png" sizes="256x256" href="/static/img/favicon-256x256.png">
+    <link rel="icon" type="image/png" sizes="512x512" href="/static/img/favicon-512x512.png">
+    <link rel="icon" type="image/x-icon" href="/static/img/logo.ico?v=2"/>
+
+    <!-- SEO Meta Tags -->
+    {% if lecture is defined %}
+        <!-- Lecture-specific SEO Meta Tags -->
+        <!-- Skip meta description if it's already defined in the child template -->
+        {% block meta_description %}
+            <meta name="description" content="{{ lecture.description|striptags|truncate(250) }}">
+        {% endblock %}
+        <meta name="keywords"
+              content=" {{ lecture.title|commas }}, {{ lecture.section.name|commas }}, биолекторий, лекции, биология, МГУ, наука, образование, школа, наука, зоологический, музей, дети">
+        <link rel="canonical" href="{{ url_for('main.lecture_detail', slug=lecture.slug, _external=True) }}">
+        <meta property="og:type" content="article">
+        <meta property="og:url" content="{{ url_for('main.lecture_detail', slug=lecture.slug, _external=True) }}">
+        <meta property="og:title" content="{{ lecture.title }} - Биолекторий - Зоологический Музей МГУ">
+        <meta property="og:description" content="{{ lecture.description|striptags|truncate(250) }}">
+        {% if lecture.image %}
+            <meta property="og:image"
+                  content="{{ url_for('static', filename='uploads/lectures/' + lecture.image, _external=True) }}">
+        {% endif %}
+        <meta property="og:site_name" content="Биолекторий - Зоологический Музей МГУ">
+        <meta property="og:locale" content="ru_RU">
+        <meta name="twitter:card" content="summary_large_image">
+        <meta name="twitter:title" content="{{ lecture.title }} - Биолекторий - Зоологический Музей МГУ">
+        <meta name="twitter:description" content="{{ lecture.description|striptags|truncate(250) }}">
+        {% if lecture.image %}
+            <meta name="twitter:image"
+                  content="{{ url_for('static', filename='uploads/lectures/' + lecture.image, _external=True) }}">
+        {% endif %}
+
+        <meta property="ya:ovs:upload_date"
+              content="{{ lecture.created_at.strftime('%Y-%m-%d') if lecture.created_at else '' }}">
+        <meta property="ya:ovs:adult" content="false">
+    {% elif section is defined %}
+        <!-- Section-specific SEO Meta Tags -->
+        <meta name="description"
+              content="{{ section.description|striptags|truncate(250) if section.description else 'Раздел лекций: ' + section.name + ' - Биолекторий - Зоологический Музей МГУ' }}">
+        <meta name="keywords" content="{{ section.name|commas }}, биолекторий, лекции, биология, МГУ, наука, образование, школа, наука, зоологический, музей, дети">
+        <link rel="canonical" href="{{ url_for('main.section_detail', slug=section.slug, _external=True) }}">
+        <meta property="og:type" content="website">
+        <meta property="og:url" content="{{ url_for('main.section_detail', slug=section.slug, _external=True) }}">
+        <meta property="og:title" content="{{ section.name }} - Биолекторий-Зоологический Музей МГУ">
+        <meta property="og:description"
+              content="{{ section.description|striptags|truncate(250) if section.description else 'Раздел лекций: ' + section.name + ' - Биолекторий - Зоологический Музей МГУ' }}">
+        {% if section.image %}
+            <meta property="og:image"
+                  content="{{ url_for('static', filename='uploads/sections/' + section.image, _external=True) }}">
+        {% endif %}
+        <meta property="og:site_name" content="Биолекторий - Зоологический Музей МГУ">
+        <meta property="og:locale" content="ru_RU">
+        <meta name="twitter:card" content="summary_large_image">
+        <meta name="twitter:title" content="{{ section.name }} - Биолекторий - Зоологический Музей МГУ">
+        <meta name="twitter:description"
+              content="{{ section.description|striptags|truncate(250) if section.description else 'Раздел лекций: ' + section.name + ' - Биолекторий - Зоологический Музей МГУ' }}">
+        {% if section.image %}
+            <meta name="twitter:image"
+                  content="{{ url_for('static', filename='uploads/sections/' + section.image, _external=True) }}">
+        {% endif %}
+
+    {% else %}
+        <!-- Default SEO Meta Tags -->
+        <meta name="description"
+              content="Биолекторий - научно-популярные лекции по биологии от Зоологического Музея МГУ">
+        <meta name="keywords" content="биолекторий, лекции, биология, МГУ, наука, образование, школа, наука, зоологический, музей, дети">
+        <meta property="og:type" content="website">
+        <meta property="og:url" content="{{ request.url }}">
+        <meta property="og:title" content="{% block og_title %}Биолекторий - Зоологический Музей МГУ{% endblock %}">
+        <meta property="og:description"
+              content="{% block og_description %}Биолекторий - научно-популярные лекции по биологии Зоологического Музея МГУ{% endblock %}">
+        <meta property="og:site_name" content="Биолекторий-Зоологический Музей МГУ">
+        <meta property="og:locale" content="ru_RU">
+        <meta name="twitter:card" content="summary_large_image">
+        <meta name="twitter:title" content="{% block twitter_title %}Биолекторий - Зоологический Музей МГУ{% endblock %}">
+        <meta name="twitter:description"
+              content="{% block twitter_description %}Биолекторий - научно-популярные лекции по биологии Зоологического Музея МГУ{% endblock %}">
+
+    {% endif %}
+
+    <meta name="yandex-verification" content="2e144b611280f0e7"/>
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    <!-- Analytics -->
+
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-132401784-1"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+
+        function gtag() {
+            dataLayer.push(arguments);
+        }
+
+        gtag('js', new Date());
+
+        gtag('config', 'UA-132401784-1');
+    </script>
+    <!-- Yandex.Metrika counter -->
+    <script type="text/javascript" >
+       (function(m,e,t,r,i,k,a){m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
+       m[i].l=1*new Date();
+       for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
+       k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)})
+       (window, document, "script", "https://mc.yandex.ru/metrika/tag.js", "ym");
+
+       ym(51894392, "init", {
+            clickmap:true,
+            trackLinks:true,
+            accurateTrackBounce:true,
+            webvisor:true
+       });
+    </script>
+    <noscript><div><img src="https://mc.yandex.ru/watch/51894392" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
+    <!-- /Yandex.Metrika counter -->
+    <!-- Varioqub experiments -->
+    <script type="text/javascript">
+    (function(e, x, pe, r, i, me, nt){
+    e[i]=e[i]||function(){(e[i].a=e[i].a||[]).push(arguments)},
+    me=x.createElement(pe),me.async=1,me.src=r,nt=x.getElementsByTagName(pe)[0],me.addEventListener('error',function(){function cb(t){t=t[t.length-1],'function'==typeof t&&t({flags:{}})};Array.isArray(e[i].a)&&e[i].a.forEach(cb);e[i]=function(){cb(arguments)}}),nt.parentNode.insertBefore(me,nt)})
+    (window, document, 'script', 'https://abt.s3.yandex.net/expjs/latest/exp.js', 'ymab');
+    ymab('metrika.51894392', 'init'/*, {clientFeatures}, {callback}*/);
+    </script>
+
+    <!-- /Analytics -->
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+<header class="bg-light">
+    <nav class="navbar navbar-expand-lg navbar-light fixed-top bg-light shadow-sm">
+        <div class="container">
+            <a class="navbar-brand" href="{{ url_for('main.index') }}">
+                <img src="{{ url_for('static', filename='img/logo.png') }}" alt="Биолекторий-Зоологический Музей МГУ"
+                     height="50">
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                    aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    {% for item in menu_items %}
+                        {% if item.url and item.url.__contains__("admin") %}
+                            {% if session['is_admin'] or session['is_editor'] %}
+                                <li class="nav-item">
+                                    <a class="nav-link" href="{{ item.url }}">{{ item.name }}</a>
+                                </li>
+                            {% endif %}
+
+                        {% else %}
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ item.url }}">{{ item.name }}</a>
+                            </li>
+                        {% endif %}
+                    {% endfor %}
+
+                    {% if 'user_id' in session %}
+                        {#                        <li class="nav-item">#}
+                        {#                            <a class="nav-link" href="{{ url_for('main.profile') }}">Личный кабинет</a>#}
+                        {#                        </li>#}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('auth.logout') }}">Выход</a>
+                        </li>
+                    {% else %}
+                        {#                        <li class="nav-item">#}
+                        {#                            <a class="nav-link" href="{{ url_for('auth.login') }}">Вход</a>#}
+                        {#                        </li>#}
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </nav>
+</header>
+
+<main class="container-fluid px-0">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div class="overlay" id="popup-overlay">
+                <div class="popup" id="popup-container">
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }}">{{ message }}</div>
+                    {% endfor %}
+                </div>
+            </div>
+        {% endif %}
+    {% endwith %}
+
+
+    {% block content %}{% endblock %}
+</main>
+
+<footer class="bg-dark text-white py-4 m-0">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-4">
+                <h5>Биолекторий</h5>
+                <p>Зоологический музей Московского государственного университета имени М. В. Ломоносова</p>
+            </div>
+            <div class="col-md-4">
+                <h5>Контакты</h5>
+                <p>Адрес: Большая Никитская ул., 2, Москва, Россия, 125009</p>
+                <p>Email: biolectures@mail.ru</p>
+                <!-- Соцсети -->
+                <div class="d-flex gap-2 justify-content-start mb-4">
+
+
+                    <a href="https://wa.me/79264505235?text="
+                       class="btn btn-outline-success btn-sm"
+                       target="_blank" title="WhatsApp">
+                        <i class="bi-whatsapp"></i>
+                    </a>
+                    <a href="https://t.me/+79264505235"
+                       class="btn btn-outline-info btn-sm"
+                       target="_blank" title="Telegram">
+                        <i class="bi-telegram"></i>
+                    </a>
+                    <a href="https://vk.com/biolectorij"
+                       class="btn btn-outline-primary btn-sm"
+                       target="_blank" title="VK">
+                        <i class="fab fa-vk"></i>
+                    </a>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <h5>Ссылки</h5>
+                <ul class="list-unstyled">
+                    <li><a href="{{ url_for('main.index') }}" class="text-white">Главная</a></li>
+                    <li><a href="{{ url_for('main.sections') }}" class="text-white">Разделы лекций</a></li>
+                    <li><a href="{{ url_for('main.contacts') }}" class="text-white">Контакты</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="row mt-3">
+            <div class="col-12 text-center">
+                <p>&copy; {{ now.year }} Биолекторий.</p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const overlay = document.getElementById('popup-overlay');
+        const popupContainer = document.getElementById('popup-container');
+
+        if (!overlay || !popupContainer) {
+           return; // Остановить выполнение, если элементов нет
+       }
+
+        // Скрытие сообщения по клику на overlay
+        overlay.addEventListener('click', function (event) {
+            if (event.target === overlay) { // Проверяем, что клик был не на самом сообщении
+                overlay.style.display = 'none';
+            }
+        });
+
+        // Скрытие сообщения по нажатию на клавишу Esc
+        document.addEventListener('keydown', function (event) {
+            if (event.key === 'Escape') { // Проверка нажатой клавиши
+                overlay.style.display = 'none';
+            }
+        });
+
+        // Скрытие при клике на само окно с сообщением (если нужно):
+        popupContainer.addEventListener('click', function () {
+            overlay.style.display = 'none';
+        });});
+</script>
+
+{% block extra_js %}{% endblock %}
+
+<!-- JSON-LD Structured Data for Organization -->
+<script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "name": "Биолекторий - Зоологический Музей МГУ",
+      "url": "{{ url_for('main.index', _external=True) }}",
+  "logo": "{{ url_for('static', filename='img/logo.png', _external=True) }}",
+  "address": {
+    "@type": "PostalAddress",
+    "streetAddress": "Большая Никитская ул., 2",
+    "addressLocality": "Москва",
+    "postalCode": "125009",
+    "addressCountry": "RU"
+  },
+  "contactPoint": {
+    "@type": "ContactPoint",
+
+    "contactType": "customer service",
+    "email": "biolectures@mail.ru"
+  },
+  "sameAs": [
+    "https://vk.com/biolectorij"
+  ]
+}
+</script>
+
+{% if lecture is defined %}
+    <!-- JSON-LD Structured Data for Course -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Course",
+      "name": "{{ lecture.title|replace('"', '\\"') }}",
+      "description": "{{ lecture.description|striptags|replace('"', '\\"') }}",
+      "provider": {
+        "@type": "Organization",
+        "name": "Биолекторий - Зоологический Музей МГУ",
+        "sameAs": "{{ url_for('main.index', _external=True) }}"
+      },
+      "url": "{{ url_for('main.lecture_detail', slug=lecture.slug, _external=True) }}"
+      {% if lecture.image %},
+      "image": "{{ url_for('static', filename='uploads/lectures/' + lecture.image, _external=True) }}"
+      {% endif %},
+      "offers": {
+        "@type": "Offer",
+        "availability": "https://schema.org/InStock",
+        "priceSpecification": {
+          "@type": "UnitPriceSpecification",
+          "price": "0.0",
+          "priceCurrency": "RUB",
+          "description": "Цена устанавливается индивидуально. По запросу."
+        },
+        "category": "Education",
+        "url": "{{ url_for('main.lecture_detail', slug=lecture.slug, _external=True) }}"
+      },
+      "hasCourseInstance": {
+        "@type": "CourseInstance",
+        "courseMode": "online",
+        "courseWorkload": "PT1H",
+        "description": "Этот курс проводится по запросу.",
+        "location": {
+          "@type": "Place",
+          "name": "Зоологический музей МГУ",
+          "address": {
+            "@type": "PostalAddress",
+            "streetAddress": "Большая Никитская ул., 2",
+            "addressLocality": "Москва",
+            "postalCode": "125009",
+            "addressCountry": {
+              "@type": "Country",
+              "name": "RU"
+            }
+          }
+        }
+      }
+    }
+</script>
+
+
+
+
+
+    <!-- JSON-LD Structured Data for BreadcrumbList -->
+    <script type="application/ld+json">
+        {
+          "@context": "https://schema.org",
+          "@type": "BreadcrumbList",
+          "itemListElement": [
+            {
+              "@type": "ListItem",
+              "position": 1,
+              "name": "Главная",
+              "item": "{{ url_for('main.index', _external=True) }}"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Разделы лекций",
+      "item": "{{ url_for('main.sections', _external=True) }}"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "{{ lecture.section.name }}",
+      "item": "{{ url_for('main.section_detail', slug=lecture.section.slug, _external=True) }}"
+    },
+    {
+      "@type": "ListItem",
+      "position": 4,
+      "name": "{{ lecture.title }}",
+      "item": "{{ url_for('main.lecture_detail', slug=lecture.slug, _external=True) }}"
+    }
+  ]
+}
+    </script>
+{% elif section is defined %}
+    <!-- JSON-LD Structured Data for BreadcrumbList -->
+    <script type="application/ld+json">
+        {
+          "@context": "https://schema.org",
+          "@type": "BreadcrumbList",
+          "itemListElement": [
+            {
+              "@type": "ListItem",
+              "position": 1,
+              "name": "Главная",
+              "item": "{{ url_for('main.index', _external=True) }}"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Разделы лекций",
+      "item": "{{ url_for('main.sections', _external=True) }}"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "{{ section.name }}",
+      "item": "{{ url_for('main.section_detail', slug=section.slug, _external=True) }}"
+    }
+  ]
+}
+    </script>
+
+    <!-- JSON-LD Structured Data for CollectionPage -->
+    <script type="application/ld+json">
+        {
+          "@context": "https://schema.org",
+          "@type": "CollectionPage",
+          "name": "{{ section.name }}",
+  "description": "{{ section.description|striptags|replace('"', '\\"') if section.description else 'Раздел лекций: ' + section.name }}",
+  "url": "{{ url_for('main.section_detail', slug=section.slug, _external=True) }}"
+        {% if section.image %}, "image": "{{ url_for('static', filename='uploads/sections/' + section.image, _external=True) }}"{% endif %}
+        }
+    </script>
+{% endif %}
+</body>
+</html>

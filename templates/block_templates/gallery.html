@@ -1,0 +1,25 @@
+<section class="gallery-section py-4 mb-4 bg-light">
+    <div class="container">
+        <h2 class="text-center mb-4">{{ block.title }}</h2>
+        <div class="text-center mb-4">{{ block.content|safe }}</div>
+        <div class="row row-cols-1 row-cols-md-3 g-4">
+            <!-- Gallery content would be added dynamically -->
+            {% if block.image %}
+            <div class="col">
+                <div class="card h-100">
+                    <img src="{{ url_for('static', filename='uploads/' + block.image) }}" 
+                         class="card-img-top" alt="{{ block.title }}">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ block.title }}</h5>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+        {% if block.button_text and block.button_url %}
+            <div class="text-center mt-4">
+                <a href="{{ block.button_url }}" class="btn btn-primary">{{ block.button_text }}</a>
+            </div>
+        {% endif %}
+    </div>
+</section>

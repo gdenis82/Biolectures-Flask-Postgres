@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Подтверждение заказа лекции и регистрации - {{ site_name }}</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header {
+            background-color: #9b59b6;
+            color: white;
+            padding: 10px 20px;
+            text-align: center;
+            border-radius: 5px 5px 0 0;
+        }
+        .content {
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-top: none;
+            border-radius: 0 0 5px 5px;
+        }
+        .button {
+            display: inline-block;
+            background-color: #9b59b6;
+            color: white;
+            text-decoration: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+        .footer {
+            margin-top: 20px;
+            font-size: 12px;
+            color: #777;
+            text-align: center;
+        }
+        .order-details, .account-details {
+            background-color: #f9f9f9;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 15px 0;
+        }
+        .order-details h3, .account-details h3 {
+            margin-top: 0;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>{{ site_name }}</h1>
+    </div>
+    <div class="content">
+        <h2>Здравствуйте, {{ user.username }}!</h2>
+        
+        <p>Благодарим вас за заказ лекции на сайте {{ site_name }}. Для вас был создан аккаунт, который позволит вам отслеживать статус заказа и делать новые заказы в будущем.</p>
+        
+        <div class="account-details">
+            <h3>Данные вашего аккаунта:</h3>
+            <p><strong>Имя пользователя:</strong> {{ user.username }}</p>
+            <p><strong>Email:</strong> {{ user.email }}</p>
+            <p><strong>Пароль:</strong> Используйте функцию восстановления пароля для установки пароля</p>
+        </div>
+        
+        <p>Для подтверждения вашего заказа и активации аккаунта, пожалуйста, нажмите на кнопку ниже:</p>
+        
+        <p style="text-align: center;">
+            <a href="{{ confirmation_url }}" class="button">Подтвердить заказ и активировать аккаунт</a>
+        </p>
+        
+        <div class="order-details">
+            <h3>Детали заказа:</h3>
+            <p><strong>Лекция:</strong> {{ order.lecture.title }}</p>
+            <p><strong>Имя:</strong> {{ order.name }}</p>
+            <p><strong>Email:</strong> {{ order.email }}</p>
+            <p><strong>Телефон:</strong> {{ order.phone }}</p>
+            <p><strong>Организация:</strong> {{ order.organization }}</p>
+            <p><strong>Сообщение:</strong> {{ order.message }}</p>
+            <p><strong>Дата заказа:</strong> {{ order.created_at.strftime('%d.%m.%Y %H:%M') }}</p>
+        </div>
+        
+        <p>Если кнопка не работает, вы можете скопировать и вставить следующую ссылку в адресную строку вашего браузера:</p>
+        
+        <p style="word-break: break-all;">{{ confirmation_url }}</p>
+        
+        <p>Обратите внимание, что ссылка действительна в течение 24 часов.</p>
+        
+        <p>После подтверждения заказа, наш менеджер свяжется с вами для уточнения деталей.</p>
+        
+        <p>С уважением,<br>Команда {{ site_name }}</p>
+    </div>
+    <div class="footer">
+        <p>Это автоматическое сообщение, пожалуйста, не отвечайте на него.</p>
+        <p>&copy; {{ now.year }} {{ site_name }}. Все права защищены.</p>
+    </div>
+</body>
+</html>

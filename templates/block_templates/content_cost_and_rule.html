@@ -1,0 +1,127 @@
+<!-- Bootstrap CSS и иконки -->
+
+
+<style>
+    .accordion-item {
+        transition: box-shadow 0.3s ease;
+    }
+
+    .accordion-button {
+        transition: background-color 0.3s ease;
+    }
+
+    .accordion-button:not(.collapsed) {
+        background-color: rgba(0, 0, 0, 0.05);
+        font-weight: 500;
+    }
+
+    .accordion-body {
+        animation: fadeIn 0.4s ease-in-out;
+    }
+
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(5px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+</style>
+<section
+        id="price"
+        class="hero-section container-fluid px-0  {% if block.image %}with-image{% endif %} m-0"
+        {% if block.image %}
+        style="background-image: url('{{ url_for('static', filename='uploads/blocks' + block.image) }}');"
+        {% else %}
+         style="background-color: #f8f9fa;"
+        {% endif %}>
+    <div  class="container py-5">
+        <div class="text-center mb-5">
+            <h1 class="display-6">{{ block.title }}</h1>
+        </div>
+
+        <div class="accordion" id="priceAccordion">
+            <!-- Лекции -->
+            <div class="accordion-item bg-light border rounded shadow-sm mb-3">
+                <h2 class="accordion-header" id="headingLectures">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                            data-bs-target="#collapseLectures" aria-expanded="true" aria-controls="collapseLectures">
+                        <i class="bi bi-easel-fill me-2 text-primary"></i> Стоимость лекций
+                    </button>
+                </h2>
+                <div id="collapseLectures" class="accordion-collapse collapse" aria-labelledby="headingLectures"
+                     data-bs-parent="#priceAccordion">
+                    <div class="accordion-body">
+                        <ul>
+                            <li>1 лекция (до 30 чел.) – <strong>4000 руб.</strong></li>
+                            <li>2 лекции в день – <strong>3500 руб./класс</strong></li>
+                            <li>3+ лекций – <strong>3000 руб./класс</strong></li>
+                            <li>Разные темы, по 45 мин.</li>
+                            <li>Онлайн-лекция в Zoom: <strong>100 руб./чел.</strong> (мин. 20 человек), оплата
+                                централизованно
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Интерактивы -->
+            <div class="accordion-item bg-light border rounded shadow-sm mb-3">
+                <h2 class="accordion-header" id="headingInteractive">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                            data-bs-target="#collapseInteractive" aria-expanded="false"
+                            aria-controls="collapseInteractive">
+                        <i class="bi bi-joystick me-2 text-success"></i> Стоимость интерактивных занятий
+                    </button>
+                </h2>
+                <div id="collapseInteractive" class="accordion-collapse collapse" aria-labelledby="headingInteractive"
+                     data-bs-parent="#priceAccordion">
+                    <div class="accordion-body">
+                        <ul>
+                            <li>1 занятие (до 30 чел.) – <strong>7000 руб.</strong></li>
+                            <li>2+ занятий – <strong>6500 руб./класс</strong></li>
+                            <li>Малая группа (до 10 чел.) – <strong>6000 руб.</strong></li>
+                            <li>До 3–4 занятий в день, по 45–50 мин.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Выезд за МКАД -->
+            <div class="accordion-item bg-light border rounded shadow-sm mb-3">
+                <h2 class="accordion-header" id="headingOutskirts">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                            data-bs-target="#collapseOutskirts" aria-expanded="false" aria-controls="collapseOutskirts">
+                        <i class="bi bi-bus-front-fill me-2 text-danger"></i> Выезд за МКАД
+                    </button>
+                </h2>
+                <div id="collapseOutskirts" class="accordion-collapse collapse" aria-labelledby="headingOutskirts"
+                     data-bs-parent="#priceAccordion">
+                    <div class="accordion-body">
+                        <ul>
+                            <li>Доп. сбор за проезд (рассчитывается индивидуально)</li>
+                            <li>Выезд за МКАД — при заказе от 2 программ</li>
+                            <li>К первому уроку — при 2+ в Москве или 3+ в области, либо по договоренности</li>
+                            <li><strong>Классы не объединяем</strong></li>
+                            <li>Занятия — только в классах (кроме экстренных случаев)</li>
+                            <li>Соблюдайте возраст и размер группы</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row d-flex align-items-center justify-content-center mt-4 mb-4">
+            <div class="col-md-10 text-center">
+                {% if session['is_admin'] or session['is_editor']%}
+                    <a href="/admin/homeblock/edit/?id={{ block.id }}&url=/admin/homeblock/"
+                       class="btn btn-outline-danger">Редактировать</a>
+                {% endif %}
+            </div>
+        </div>
+
+</section>

@@ -1,0 +1,361 @@
+{% extends 'base.html' %}
+
+{% block title %}Личный кабинет - Биолекторий{% endblock %}
+
+{% block content %}
+<div class="container mt-5 mb-5 pt-5">
+    <div class="row">
+        <div class="col-md-4">
+            <div class="card mb-4">
+                <div class="card-body text-center">
+                    <div class="avatar-container mb-3">
+                        {% if user.avatar %}
+                            <img src="{{ url_for('static', filename='uploads/avatars/' + user.avatar) }}" alt="Аватар пользователя" class="rounded-circle avatar-img">
+                        {% else %}
+                            <img src="https://robohash.org/{{ user.username }}?set=set4&size=200x200" alt="Аватар пользователя" class="rounded-circle avatar-img">
+                        {% endif %}
+                    </div>
+                    <h5 class="card-title">{{ user.first_name }} {{ user.last_name }}</h5>
+                    <p class="card-text">Email: {{ user.email }}</p>
+                    <p class="card-text">Login: {{ user.username }}</p>
+
+
+
+                    <hr class="my-4">
+
+                    <div class="accordion" id="profileAccordion">
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="headingProfile">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseProfile" aria-expanded="false" aria-controls="collapseProfile">
+                                    Редактировать профиль
+                                </button>
+                            </h2>
+                            <div id="collapseProfile" class="accordion-collapse collapse" aria-labelledby="headingProfile" data-bs-parent="#profileAccordion">
+                                <div class="accordion-body">
+                                    <form action="{{ url_for('main.upload_avatar') }}" method="post" enctype="multipart/form-data" class="mt-3 mb-3">
+                        <div class="mb-3">
+                            <label for="avatar" class="form-label">Загрузить новый аватар</label>
+                            <input type="file" class="form-control" id="avatar" name="avatar" accept="image/*">
+                        </div>
+                        <button type="submit" class="btn btn-primary">Загрузить</button>
+                    </form>
+                                    <form action="{{ url_for('main.update_profile') }}" method="post" class="text-start">
+                                        <div class="mb-3">
+                                            <label for="username" class="form-label">Login</label>
+                                            <input type="text" class="form-control" id="username" name="username" value="{{ user.username }}" required>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="first_name" class="form-label">Имя</label>
+                                            <input type="text" class="form-control" id="first_name" name="first_name" value="{{ user.first_name }}">
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="last_name" class="form-label">Фамилия</label>
+                                            <input type="text" class="form-control" id="last_name" name="last_name" value="{{ user.last_name }}">
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="email" class="form-label">Email</label>
+                                            <input type="email" class="form-control" id="email" name="email" value="{{ user.email }}" required>
+                                        </div>
+                                        <button type="submit" class="btn btn-primary">Сохранить изменения</button>
+
+                                    </form>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-8">
+
+            {% if is_lecturer %}
+            <div class="card mb-4">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5>Назначенные мне заказы</h5>
+                    <button class="btn btn-sm btn-outline-primary" type="button" data-bs-toggle="collapse" data-bs-target="#filterCollapse" aria-expanded="false" aria-controls="filterCollapse">
+                        <i class="bi bi-funnel"></i> Фильтр
+                    </button>
+                </div>
+                <div class="collapse" id="filterCollapse">
+                    <div class="card-body">
+                        <form action="{{ url_for('main.profile') }}" method="get" class="row g-3">
+                            <div class="col-md-4">
+                                <label for="date_filter" class="form-label">Фильтр по дате</label>
+                                <select class="form-select" id="date_filter" name="date_filter" onchange="toggleDateInputs()">
+                                    <option value="all" {% if date_filter == 'all' %}selected{% endif %}>Все заказы</option>
+                                    <option value="range" {% if date_filter == 'range' %}selected{% endif %}>Диапазон дат</option>
+                                    <option value="specific" {% if date_filter == 'specific' %}selected{% endif %}>Конкретная дата</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4 date-range-input" {% if date_filter != 'range' %}style="display: none;"{% endif %}>
+                                <label for="start_date" class="form-label">Начальная дата</label>
+                                <input type="date" class="form-control" id="start_date" name="start_date" value="{{ start_date }}">
+                            </div>
+                            <div class="col-md-4 date-range-input" {% if date_filter != 'range' %}style="display: none;"{% endif %}>
+                                <label for="end_date" class="form-label">Конечная дата</label>
+                                <input type="date" class="form-control" id="end_date" name="end_date" value="{{ end_date }}">
+                            </div>
+                            <div class="col-md-4 specific-date-input" {% if date_filter != 'specific' %}style="display: none;"{% endif %}>
+                                <label for="specific_date" class="form-label">Дата</label>
+                                <input type="date" class="form-control" id="specific_date" name="specific_date" value="{{ specific_date }}">
+                            </div>
+                            <div class="col-12">
+                                <button type="submit" class="btn btn-primary">Применить фильтр</button>
+                                <a href="{{ url_for('main.profile') }}" class="btn btn-outline-secondary">Сбросить</a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <div class="card-body">
+                {% if assigned_orders %}
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Дата заказа</th>
+                                    <th>Лекция</th>
+                                    <th>Заказчик</th>
+                                    <th>Организация</th>
+                                    <th>Дата проведения</th>
+                                    <th>Статус</th>
+                                    <th>Детали</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for order in assigned_orders %}
+                                <tr>
+                                    <td>{{ order.created_at.strftime('%d.%m.%Y') }}</td>
+                                    <td>
+                                        <a href="{{ url_for('main.lecture_detail', slug=order.lecture.slug) }}">
+                                            {{ order.lecture.title }}
+                                        </a>
+                                    </td>
+                                    <td>{{ order.name }}</td>
+                                    <td>{{ order.organization }}</td>
+                                    <td>
+                                        {% if order.lecture_date %}
+                                            {{ order.lecture_date.strftime('%d.%m.%Y') }}
+                                        {% else %}
+                                            <span class="text-muted">Не назначена</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if order.status in ['pending', 'confirmed'] %}
+                                            <span class="badge bg-info">Новый</span>
+                                        {% elif order.status == 'processing' %}
+                                            <span class="badge bg-warning">В обработке</span>
+                                        {% elif order.status == 'approved' %}
+                                            <span class="badge bg-success">Утвержден</span>
+                                        {% elif order.status == 'cancelled' %}
+                                            <span class="badge bg-danger">Отменен</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <button type="button" class="btn btn-sm btn-outline-info" data-bs-toggle="collapse" data-bs-target="#assignedOrderDetails{{ order.id }}" aria-expanded="false" aria-controls="assignedOrderDetails{{ order.id }}">
+                                            <i class="bi bi-info-circle"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="7" class="p-0">
+                                        <div class="collapse" id="assignedOrderDetails{{ order.id }}">
+                                            <div class="card card-body m-2">
+                                                <h5>Заказ #{{ order.id }}</h5>
+                                                <p><strong>Дата заказа:</strong> {{ order.created_at.strftime('%d.%m.%Y %H:%M') }}</p>
+                                                <p><strong>Лекция:</strong> {{ order.lecture.title }}</p>
+                                                <p><strong>Дата проведения:</strong> 
+                                                    {% if order.lecture_date %}
+                                                        {{ order.lecture_date.strftime('%d.%m.%Y') }}
+                                                    {% else %}
+                                                        <span class="text-muted">Не назначена</span>
+                                                    {% endif %}
+                                                </p>
+                                                <p><strong>Заказчик:</strong> {{ order.name }}</p>
+                                                <p><strong>Email:</strong> {{ order.email }}</p>
+                                                <p><strong>Телефон:</strong> {{ order.phone }}</p>
+                                                <p><strong>Организация:</strong> {{ order.organization }}</p>
+                                                <p><strong>Статус:</strong> 
+                                                    {% if order.status in ['pending', 'confirmed'] %}
+                                                        <span class="badge bg-info">Новый</span>
+                                                    {% elif order.status == 'processing' %}
+                                                        <span class="badge bg-warning">В обработке</span>
+                                                    {% elif order.status == 'approved' %}
+                                                        <span class="badge bg-success">Утвержден</span>
+                                                    {% elif order.status == 'cancelled' %}
+                                                        <span class="badge bg-danger">Отменен</span>
+                                                    {% endif %}
+                                                </p>
+                                                {% if order.message %}
+                                                <div class="mt-3">
+                                                    <h6>Сообщение от заказчика:</h6>
+                                                    <div class="p-3 bg-light rounded">
+                                                        {{ order.message }}
+                                                    </div>
+                                                </div>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <p class="text-center">У вас пока нет назначенных заказов.</p>
+                {% endif %}
+                </div>
+            </div>
+            {% endif %}
+
+            <div class="card">
+                <div class="card-header">
+                    <h5>Мои заказы</h5>
+                </div>
+                <div class="card-body">
+                    {% if orders %}
+                        <div class="table-responsive">
+
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Дата заказа</th>
+                                        <th>Лекция</th>
+{#                                        <th>Телефон</th>#}
+                                        <th>Организация</th>
+                                        <th>Дата проведения</th>
+                                        <th>Статус</th>
+                                        <th>Детали</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for order in orders %}
+                                    <tr>
+                                        <td>{{ order.created_at.strftime('%d.%m.%Y') }}</td>
+                                        <td>
+                                            <a href="{{ url_for('main.lecture_detail', slug=order.lecture.slug) }}">
+                                                {{ order.lecture.title }}
+                                            </a>
+                                        </td>
+{#                                        <td>{{ order.phone }}</td>#}
+                                        <td>{{ order.organization }}</td>
+                                        <td>
+                                            {% if order.lecture_date %}
+                                                {{ order.lecture_date.strftime('%d.%m.%Y') }}
+                                            {% else %}
+                                                <span class="text-muted">Не назначена</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            {% if order.status in ['pending', 'confirmed'] %}
+                                                <span class="badge bg-info">Новый</span>
+                                            {% elif order.status == 'processing' %}
+                                                <span class="badge bg-warning">В обработке</span>
+                                            {% elif order.status == 'approved' %}
+                                                <span class="badge bg-success">Утвержден</span>
+                                            {% elif order.status == 'cancelled' %}
+                                                <span class="badge bg-danger">Отменен</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            <button type="button" class="btn btn-sm btn-outline-info" data-bs-toggle="collapse" data-bs-target="#orderDetails{{ order.id }}" aria-expanded="false" aria-controls="orderDetails{{ order.id }}">
+                                                <i class="bi bi-info-circle"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="7" class="p-0">
+                                            <div class="collapse" id="orderDetails{{ order.id }}">
+                                                <div class="card card-body m-2">
+                                                    <p><strong>Лекция:</strong> {{ order.lecture.title }}</p>
+                                                    <p><strong>Дата заказа:</strong> {{ order.created_at.strftime('%d.%m.%Y %H:%M') }}</p>
+                                                    <p><strong>Дата проведения:</strong> 
+                                                        {% if order.lecture_date %}
+                                                            {{ order.lecture_date.strftime('%d.%m.%Y') }}
+                                                        {% else %}
+                                                            <span class="text-muted">Не назначена</span>
+                                                        {% endif %}
+                                                    </p>
+                                                    <p><strong>Статус:</strong>
+                                                        {% if order.status in ['pending', 'confirmed'] %}
+                                                            <span class="badge bg-info">Новый</span>
+                                                        {% elif order.status == 'processing' %}
+                                                            <span class="badge bg-warning">В обработке</span>
+                                                        {% elif order.status == 'approved' %}
+                                                            <span class="badge bg-success">Утвержден</span>
+                                                        {% elif order.status == 'cancelled' %}
+                                                            <span class="badge bg-danger">Отменен</span>
+                                                        {% endif %}
+                                                    </p>
+                                                    <p><strong>Имя:</strong> {{ order.name }}</p>
+                                                    <p><strong>Email:</strong> {{ order.email }}</p>
+                                                    <p><strong>Телефон:</strong> {{ order.phone }}</p>
+                                                    <p><strong>Организация:</strong> {{ order.organization }}</p>
+                                                    <p><strong>Сообщение:</strong></p>
+                                                    <div class="p-3 bg-light rounded">
+                                                        {{ order.message|default('Нет сообщения', true) }}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <p class="text-center">У вас пока нет заказов.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .avatar-container {
+        width: 200px;
+        height: 200px;
+        margin: 0 auto;
+        overflow: hidden;
+        border-radius: 50%;
+        border: 3px solid #f0f0f0;
+    }
+
+    .avatar-img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    function toggleDateInputs() {
+        const dateFilter = document.getElementById('date_filter').value;
+        const rangeInputs = document.querySelectorAll('.date-range-input');
+        const specificInput = document.querySelectorAll('.specific-date-input');
+
+        // Hide all inputs first
+        rangeInputs.forEach(input => input.style.display = 'none');
+        specificInput.forEach(input => input.style.display = 'none');
+
+        // Show relevant inputs based on selection
+        if (dateFilter === 'range') {
+            rangeInputs.forEach(input => input.style.display = 'block');
+        } else if (dateFilter === 'specific') {
+            specificInput.forEach(input => input.style.display = 'block');
+        }
+    }
+
+    // Initialize on page load
+    document.addEventListener('DOMContentLoaded', function() {
+        toggleDateInputs();
+    });
+</script>
+{% endblock %}

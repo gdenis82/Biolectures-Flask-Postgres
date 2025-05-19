@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+
+{% block title %}Ошибка сервера - Биолекторий МГУ{% endblock %}
+
+{% block content %}
+<div class="error-page text-center py-5">
+    <h1 class="display-1">500</h1>
+    <h2 class="mb-4">Внутренняя ошибка сервера</h2>
+    <p class="lead mb-4">Извините, на сервере произошла ошибка. Мы уже работаем над её устранением.</p>
+    <div>
+        <a href="{{ url_for('main.index') }}" class="btn btn-primary">Вернуться на главную</a>
+        <a href="javascript:history.back()" class="btn btn-outline-secondary ms-2">Вернуться назад</a>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,45 @@
+<!-- Basic SEO Meta Tags -->
+<meta name="description" content="{{ lecture.description|striptags|truncate(160) }}">
+<meta name="keywords" content="биолекторий, лекция, {{ lecture.title }}, {{ lecture.section.name }}, биология, МГУ">
+<link rel="canonical" href="{{ url_for('main.lecture_detail', slug=lecture.slug, _external=True) }}">
+
+<!-- Open Graph / Facebook -->
+<meta property="og:type" content="article">
+<meta property="og:url" content="{{ url_for('main.lecture_detail', slug=lecture.slug, _external=True) }}">
+<meta property="og:title" content="{{ lecture.title }} - Биолекторий-Зоологический Музей МГУ">
+<meta property="og:description" content="{{ lecture.description|striptags|truncate(160) }}">
+{% if lecture.image %}
+<meta property="og:image" content="{{ url_for('static', filename='uploads/lectures/' + lecture.image, _external=True) }}">
+{% endif %}
+<meta property="og:site_name" content="Биолекторий-Зоологический Музей МГУ">
+<meta property="og:locale" content="ru_RU">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="{{ lecture.title }} - Биолекторий-Зоологический Музей МГУ">
+<meta name="twitter:description" content="{{ lecture.description|striptags|truncate(160) }}">
+{% if lecture.image %}
+<meta name="twitter:image" content="{{ url_for('static', filename='uploads/lectures/' + lecture.image, _external=True) }}">
+{% endif %}
+
+<!-- Yandex-specific Meta Tags -->
+<meta name="yandex-verification" content="verification_token">
+<meta property="ya:ovs:upload_date" content="{{ lecture.created_at.strftime('%Y-%m-%d') }}">
+<meta property="ya:ovs:adult" content="false">
+
+<!-- JSON-LD Structured Data for Course -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Course",
+  "name": "{{ lecture.title|replace('"', '\\"') }}",
+  "description": "{{ lecture.description|striptags|replace('"', '\\"') }}",
+  "provider": {
+    "@type": "Organization",
+    "name": "Биолекторий-Зоологический Музей МГУ",
+    "sameAs": "{{ url_for('main.index', _external=True) }}"
+  },
+  "url": "{{ url_for('main.lecture_detail', slug=lecture.slug, _external=True) }}"
+  {% if lecture.image %}, "image": "{{ url_for('static', filename='uploads/lectures/' + lecture.image, _external=True) }}"{% endif %}
+}
+</script>

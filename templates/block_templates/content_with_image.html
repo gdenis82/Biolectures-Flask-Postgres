@@ -1,0 +1,23 @@
+<section class="content-section py-4 mb-4">
+    <div class="container">
+        <div class="row">
+            {% if block.image %}
+                <div class="col-md-6">
+                    <img src="{{ url_for('static', filename='uploads/blocks/' + block.image) }}"
+                         alt="{{ block.title }}" class="img-fluid rounded">
+                </div>
+                <div class="col-md-6">
+            {% else %}
+                <div class="col-12">
+            {% endif %}
+            <h2>{{ block.title }}</h2>
+            <div>{{ block.content|safe }}</div>
+            {% if block.button_text and block.button_url %}
+                <a href="{{ block.button_url }}"
+                   class="btn btn-outline-primary mt-3">{{ block.button_text }}</a>
+            {% endif %}
+            </div>
+            </div>
+        </div>
+    <div>
+</section>

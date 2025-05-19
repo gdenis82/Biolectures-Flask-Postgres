@@ -1,0 +1,190 @@
+{% extends 'base.html' %}
+
+{% block title %}Главная - Биолекторий-Зоологический Музей МГУ{% endblock %}
+
+{% block content %}
+    <div class="home-page">
+        {% for block in blocks %}
+            {% if block.template %}
+                <!-- Render using custom template -->
+                {% include 'block_templates/' + block.template %}
+            {% elif block.block_type == 'header' %}
+                <!-- Header block (default template) -->
+                <section
+                        id="main"
+                        class="hero-section container-fluid px-0  {% if block.image %}with-image{% endif %}"
+                        {% if block.image %}
+                        style="background-image: url('{{ url_for('static', filename='uploads/blocks/' + block.image) }}');"
+                        {% endif %}>
+                    <div class="container">
+                        <div class="row d-flex align-items-center justify-content-center">
+                            <div class="col-md-8 text-center custom-green {% if block.image %}text-white{% endif %} p-3">
+                                <h1 class="display-4">{{ block.title }}</h1>
+                                <div class="lead" style="text-align: justify;">{{ block.content|safe }}</div>
+                                {% if block.button_text and block.button_url %}
+                                    <a href="{{ block.button_url }}"
+                                       class="btn btn-primary btn-lg mt-3">{{ block.button_text }}</a>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+            {% elif block.block_type == 'content' %}
+                <!-- Content block (default template) -->
+                <section
+                        id="{{ block.slug }}"
+                        class="content-section container-fluid mt-1 px-0  {% if block.image %}with-image{% endif %}"
+                        {% if block.image %}
+                        style="background-image: url('{{ url_for('static', filename='uploads/blocks/' + block.image) }}');"
+                        {% else %}
+                        style="background-color: #f8f9fa;"
+                        {% endif %}>
+                    <div class="container">
+                        <div class="row d-flex align-items-center justify-content-center mb-4">
+                            <div class="col-md-8 text-center align-items-center {% if block.image %}text-white{% endif %} p-3">
+                                <h1 class="display-4">{{ block.title }}</h1>
+                                <div class="lead" style="text-align: justify;">{{ block.content|safe }}</div>
+                                {% if block.button_text and block.button_url %}
+                                    <a href="{{ block.button_url }}"
+                                       class="btn btn-primary custom-btn-ticket mt-3">{{ block.button_text }}</a>
+                                {% endif %}
+                                {% if session['is_admin'] or session['is_editor']%}
+                                    <a href="/admin/homeblock/edit/?id={{ block.id }}&url=/admin/homeblock/"
+                                       class="btn btn-outline-danger mt-3">Редактировать</a>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div id="{{ block.slug }}_lectures-container" class="container">
+                            <!-- Карточки добавляются сюда -->
+                        </div>
+                        <div class="text-center mt-4">
+                            <button id="{{ block.slug }}_load-more-button" class="btn btn-secondary" style="
+          background: white;
+          border: 1px solid #ccc;
+          color: #333;
+          font-size: 15px;
+          padding: 10px 18px;
+          border-radius: 5px;
+          cursor: pointer;
+          display: block;
+          margin: 20px auto;
+        ">↓↓ Загрузить ещё
+                            </button>
+
+                        </div>
+
+                    </div>
+
+                </section>
+
+                <script>
+                    document.addEventListener('DOMContentLoaded', function () {
+                        const slug = "{{ block.slug }}"; // Или динамически получать slug
+                        const lecturesContainer = document.querySelector('#{{ block.slug }}_lectures-container');
+                        const loadMoreButton = document.querySelector('#{{ block.slug }}_load-more-button');
+                        let currentPage = 0; // Текущая страница
+                        const lecturesPerPage = 55; // Количество лекций на одну загрузку
+
+                        function loadLectures() {
+                            currentPage++; // Увеличиваем текущую страницу
+
+                            fetch(`/lectures_section/${slug}?page=${currentPage}&limit=${lecturesPerPage}`)
+                                .then(response => {
+                                    if (!response.ok) {
+                                        throw new Error("Ошибка загрузки данных");
+                                    }
+                                    return response.json();
+                                })
+                                .then(data => {
+                                    if (data.lectures.length === 0) {
+                                        // Если больше лекций нет, скрываем кнопку
+                                        loadMoreButton.style.display = 'none';
+                                        return;
+                                    }
+
+                                    data.lectures.forEach(lecture => {
+                                        // Создаем карточку для каждой лекции
+                                        const lectureCard = `
+            <div class="card mb-4 flex-md-row small-card">
+                ${lecture.image ? `
+                <div class="col-md-4">
+                    <img src="/static/uploads/lectures/${lecture.image}"
+                         class="img-fluid h-100 object-fit-cover rounded-start" alt="${lecture.title}">
+                </div>
+                ` : ""}
+                <div class="col-md-8 d-flex flex-column justify-content-between p-3">
+                    <div>
+                        <h5 class="card-title">${lecture.order}. ${lecture.title}</h5>
+                        <i>${lecture.subtitle ? `
+                        <h6 class="card-subtitle mb-2 text-muted">${lecture.subtitle}</h6>
+                        ` : ""}</i>
+                        <p class="card-text">${lecture.content}</p>
+                    </div>
+                    <div class="mt-3">
+                        <a href="/lecture/${lecture.slug}" class="btn btn-outline-primary me-2">Подробнее</a>
+                        {#<a href="/order/${lecture.id}" class="btn btn-outline-primary">Заказать</a>#}
+                    {% if session['is_admin'] %}
+                        <a href="/admin/lecture/edit/?id=${lecture.id}&url=/admin/lecture/" class="btn btn-outline-danger">Редактировать</a>
+                    {% endif %}
+                    </div>
+                </div>
+            </div>
+        `;
+                                        lecturesContainer.innerHTML += lectureCard;
+                                    });
+                                })
+                                .catch(error => {
+                                    console.error("Ошибка загрузки данных:", error);
+                                });
+                        }
+
+                        // Загружаем первую порцию лекций при начальной загрузке страницы
+                        loadLectures();
+
+                        // Привязываем событие клика к кнопке «Загрузить ещё»
+                        loadMoreButton.addEventListener('click', function () {
+                            loadLectures();
+                        });
+                    });
+                </script>
+
+            {% elif block.block_type == 'gallery' %}
+                <!-- Gallery block (default template) -->
+                <section class="gallery-section py-4 mb-4 bg-light">
+                    <div class="container">
+                        <h2 class="text-center mb-4">{{ block.title }}</h2>
+                        <div>{{ block.content|safe }}</div>
+                        <!-- Gallery content would be added here -->
+                        {% if block.button_text and block.button_url %}
+                            <div class="text-center mt-4">
+                                <a href="{{ block.button_url }}" class="btn btn-primary">{{ block.button_text }}</a>
+                            </div>
+                        {% endif %}
+                    </div>
+                </section>
+            {% else %}
+                <!-- Default block -->
+                <section class="py-4 mb-4">
+                    <div class="container">
+                        {% if block.title %}<h2>{{ block.title }}</h2>{% endif %}
+                        <div>{{ block.content|safe }}</div>
+                        {% if block.button_text and block.button_url %}
+                            <a href="{{ block.button_url }}"
+                               class="btn btn-outline-primary mt-3">{{ block.button_text }}</a>
+                        {% endif %}
+                    </div>
+                </section>
+            {% endif %}
+            <!-- Разделитель -->
+            <div class="divider div-transparent div-dot"></div>
+        {% else %}
+            <!-- No blocks found -->
+            <div class="alert alert-info">
+                <p>Добро пожаловать на сайт Биолектория МГУ! Контент главной страницы находится в разработке.</p>
+            </div>
+        {% endfor %}
+    </div>
+
+{% endblock %}

@@ -1,0 +1,129 @@
+<section
+        id="main"
+        class="hero-section container-fluid px-0  {% if block.image %}with-image{% endif %}"
+        {% if block.image %}
+        style="background-image: url('{{ url_for('static', filename='uploads/blocks/' + block.image) }}');"
+        {% endif %}>
+    <div class="container">
+        <div class="row d-flex align-items-center justify-content-center">
+            <div class="col-md-10 text-center  text-dark p-3" style="background-color: rgba(255,255,255,0.8)">
+                <h1 class="display-4">{{ block.title }}</h1>
+                <div class="lead" style="text-align: justify;">{{ block.content|safe }}</div>
+                {% if block.button_text and block.button_url %}
+                    <a href="{{ block.button_url }}"
+                       class="btn btn-primary btn-lg mt-3">{{ block.button_text }}</a>
+                {% endif %}
+            </div>
+        </div>
+        <div class="row d-flex justify-content-center mt-4 mb-4">
+            <!-- Левая колонка: контакты -->
+            <div class="col-md-3">
+                <div class="d-flex flex-column gap-3">
+                    <!-- Email -->
+                    <a href="mailto:biolectures@mail.ru"
+                       class="btn btn-sm w-100" style="background-color: #cece00">
+                        <i class="bi-envelope-fill me-1"></i>
+                        biolectures@mail.ru
+                    </a>
+                    <!-- Соцсети -->
+                    <div class="d-flex gap-2 justify-content-start">
+
+
+                        <a href="https://wa.me/79264505235?text="
+                           class="btn btn-outline-success btn-sm"
+                           target="_blank" title="WhatsApp">
+                            <i class="bi-whatsapp"></i>
+                        </a>
+                        <a href="https://t.me/+79264505235"
+                           class="btn btn-outline-info btn-sm"
+                           target="_blank" title="Telegram">
+                            <i class="bi-telegram"></i>
+                        </a>
+                        <a href="https://vk.com/biolectorij"
+                           class="btn btn-outline-primary btn-sm"
+                           target="_blank" title="VK">
+                            <i class="fab fa-vk"></i>
+                        </a>
+                    </div>
+                    <!-- Кнопка записи -->
+                    <a href="/#contact-form"
+                       class="btn btn-sm w-100 mb-3"  style="background-color: #cece00">
+                        Запишитесь сегодня
+                    </a>
+                </div>
+            </div>
+
+            <!-- Правая колонка: программы -->
+            <div class="col-md-7">
+                <div class="row row-cols-1 row-cols-md-2 ">
+                    <!-- Выездные лекции -->
+                    <div class="col">
+                        <div class="card text-center bg-transparent border-0 box-shadow-none">
+                            <div class="card-body bg-transparent">
+                                <i class="bi-truck display-4 text-primary mb-2"></i>
+                                <h6 class="card-title mb-0">
+                                    <a href="/section/lectures"
+                                       class="stretched-link text-decoration-none text-white">
+                                        Выездные&nbsp;лекции
+                                    </a>
+                                </h6>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Лекции онлайн -->
+                    <div class="col">
+                        <div class="card text-center bg-transparent border-0 box-shadow-none">
+                            <div class="card-body">
+                                <i class="bi-laptop display-4 text-primary mb-2"></i>
+                                <h6 class="card-title mb-0">
+                                    <a href="/section/lectures"
+                                       class="stretched-link text-decoration-none text-white">
+                                        Лекции&nbsp;онлайн
+                                    </a>
+                                </h6>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Интерактивные занятия -->
+                    <div class="col">
+                        <div class="card text-center bg-transparent border-0 box-shadow-none">
+                            <div class="card-body">
+                                <i class="bi-people display-4 text-primary mb-2"></i>
+                                <h6 class="card-title mb-0">
+                                    <a href="/#Interactive_classes"
+                                       class="stretched-link text-decoration-none text-white">
+                                        Интерактивные&nbsp;занятия
+                                    </a>
+                                </h6>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Лекции в зоомузее -->
+                    <div class="col">
+                        <div class="card text-center bg-transparent border-0 box-shadow-none">
+                            <div class="card-body">
+                                <i class="bi-building display-4 text-primary mb-2"></i>
+                                <h6 class="card-title mb-0">
+                                    <a href="https://zmmu.org/afisha"
+                                       class="stretched-link text-decoration-none text-white"
+                                       target="_blank">
+                                        Лекции в&nbsp;зоологическом&nbsp;музее
+                                    </a>
+                                </h6>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    <div class="row d-flex align-items-center justify-content-center">
+    <div class="col-md-10 text-center">
+        {% if session['is_admin'] or session['is_editor']%}
+            <a href="/admin/homeblock/edit/?id={{ block.id }}&url=/admin/homeblock/"
+               class="btn btn-outline-danger">Редактировать</a>
+        {% endif %}
+    </div>
+    </div>
+
+    </div>
+</section>

@@ -1,0 +1,103 @@
+
+
+<!-- Contact Form Section -->
+<section id="contact-form" class="hero-section container-fluid px-0  {% if block.image %}with-image{% endif %}"
+        {% if block.image %}
+        style="background-image: url('{{ url_for('static', filename='uploads/blocks/' + block.image) }}');"
+        {% endif %}>
+    <div class="container ">
+        <div class="row d-flex align-items-center justify-content-center">
+            <div class="col-md-6 mt-5 mb-5">
+                <div class="card shadow">
+                    <div class="card-body ">
+                        <h2 class="card-title text-center mb-4">{{ block.title }}</h2>
+                        <p class="text-center mb-4">
+                            {{ block.content|safe }}
+                        </p>
+
+                        <form id="contactForm" method="POST" action="/contact-form">
+                            <div class="mb-3">
+                                <label for="name" class="form-label">Ваше имя *</label>
+                                <input type="text" class="form-control" id="name" name="name" required>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="email" class="form-label">Email *</label>
+                                <input type="email" class="form-control" id="email" name="email" required>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="phone" class="form-label">Телефон</label>
+                                <input type="tel" class="form-control" id="phone" name="phone">
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="organization" class="form-label">Организация/Номер школы</label>
+                                <input type="text" class="form-control" id="organization" name="organization">
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="message" class="form-label">Сообщение</label>
+                                <textarea class="form-control" id="message" name="message" rows="4"
+                                          placeholder="Укажите предпочтительную дату, количество слушателей и другие детали"></textarea>
+                            </div>
+
+                            <div class="mb-3" id="captchaContainer">
+                                <label class="form-label">Проверка безопасности *</label>
+                                <div class="input-group">
+                                    <span class="input-group-text" id="captchaQuestion"></span>
+                                    <input type="number" class="form-control" id="captchaAnswer" name="captchaAnswer" required>
+                                    <input type="hidden" id="captchaNum1" name="captchaNum1">
+                                    <input type="hidden" id="captchaNum2" name="captchaNum2">
+                                </div>
+                            </div>
+
+                            <div class="mb-3 form-check">
+                                <input type="checkbox" class="form-check-input" id="dataAgreement" name="dataAgreement" required>
+                                <label class="form-check-label" for="dataAgreement">Я согласен на обработку персональных данных *</label>
+                            </div>
+
+                            <div class="d-grid">
+                                <button type="submit" class="btn btn-primary">Отправить сообщение</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+    // Generate CAPTCHA
+    function generateCaptcha() {
+        const num1 = Math.floor(Math.random() * 10) + 1;
+        const num2 = Math.floor(Math.random() * 10) + 1;
+        document.getElementById('captchaQuestion').textContent = `${num1} + ${num2} = ?`;
+        document.getElementById('captchaNum1').value = num1;
+        document.getElementById('captchaNum2').value = num2;
+    }
+
+    // Validate form before submission
+    document.getElementById('contactForm').addEventListener('submit', function(event) {
+        event.preventDefault();
+
+        const num1 = parseInt(document.getElementById('captchaNum1').value);
+        const num2 = parseInt(document.getElementById('captchaNum2').value);
+        const userAnswer = parseInt(document.getElementById('captchaAnswer').value);
+
+        if (userAnswer !== (num1 + num2)) {
+            alert('Неверный ответ на проверку безопасности. Пожалуйста, попробуйте еще раз.');
+            generateCaptcha();
+            document.getElementById('captchaAnswer').value = '';
+            return false;
+        }
+
+        this.submit();
+    });
+
+    // Generate CAPTCHA on page load
+    document.addEventListener('DOMContentLoaded', function() {
+        generateCaptcha();
+    });
+</script>

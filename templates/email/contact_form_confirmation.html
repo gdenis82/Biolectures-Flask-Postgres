@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Подтверждение получения сообщения</title>
+</head>
+<body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
+    <div style="background-color: #f8f9fa; padding: 20px; border-radius: 5px; border-top: 4px solid #28a745;">
+        <h2 style="color: #28a745;">Спасибо за ваше сообщение!</h2>
+        
+        <p>Уважаемый(ая) <strong>{{ name }}</strong>,</p>
+        
+        <p>Мы получили ваше сообщение и благодарим вас за проявленный интерес к Биолекторию МГУ.</p>
+        
+        <p>Наш менеджер свяжется с вами в ближайшее время для уточнения деталей.</p>
+        
+        <div style="background-color: #ffffff; padding: 15px; border-radius: 5px; margin: 20px 0;">
+            <h3 style="margin-top: 0;">Информация из вашего сообщения:</h3>
+            <p><strong>Имя:</strong> {{ name }}</p>
+            <p><strong>Email:</strong> {{ email }}</p>
+            {% if phone %}
+            <p><strong>Телефон:</strong> {{ phone }}</p>
+            {% endif %}
+            {% if organization %}
+            <p><strong>Организация:</strong> {{ organization }}</p>
+            {% endif %}
+            <p><strong>Сообщение:</strong><br>{{ message }}</p>
+        </div>
+        
+        <p>С уважением,<br>Команда Биолектория МГУ</p>
+    </div>
+    
+    <div style="text-align: center; margin-top: 20px; font-size: 12px; color: #6c757d;">
+        <p>Это автоматическое сообщение, пожалуйста, не отвечайте на него.</p>
+        <p>&copy; {{ site_name }} {{ current_year }}</p>
+    </div>
+</body>
+</html>

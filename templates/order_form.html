@@ -1,0 +1,93 @@
+{% extends 'base.html' %}
+
+{% block title %}Заказ лекции - {{ lecture.title }} - Биолекторий МГУ{% endblock %}
+
+{% block content %}
+<div class="order-form-page container-fluid mb-4 mt-4">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{{ url_for('main.index') }}">Главная</a></li>
+            <li class="breadcrumb-item"><a href="{{ url_for('main.sections') }}">Разделы лекций</a></li>
+            <li class="breadcrumb-item"><a href="{{ url_for('main.section_detail', slug=lecture.section.slug) }}">{{ lecture.section.name }}</a></li>
+            <li class="breadcrumb-item"><a href="{{ url_for('main.lecture_detail', slug=lecture.slug) }}">{{ lecture.title }}</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Заказ лекции</li>
+        </ol>
+    </nav>
+
+    <h1 class="mb-4">Заказ лекции</h1>
+
+    <div class="row">
+        <div class="col-md-4 mb-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">{{ lecture.title }}</h5>
+                    {% if lecture.subtitle %}
+                    <h6 class="card-subtitle mb-2 text-muted">{{ lecture.subtitle }}</h6>
+                    {% endif %}
+                    {% if lecture.image %}
+                    <img src="{{ url_for('static', filename='uploads/lectures/' + lecture.image) }}" class="img-fluid rounded mb-3" alt="{{ lecture.title }}">
+                    {% endif %}
+                    <p class="card-text">{{ lecture.description|truncate(200) }}</p>
+                    <div class="lecture-meta">
+                        <span class="badge bg-primary me-2">{{ lecture.lecture_type.name }}</span>
+                        <span class="badge bg-secondary me-2">{{ lecture.section.name }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Форма заказа</h5>
+                    <p class="card-text">Заполните форму ниже, чтобы заказать лекцию. Мы свяжемся с вами для уточнения деталей.<br> Обязательно указывайте в заявке номер школы и контактный телефон, а также лектора, если для Вас это принципиально!</p>
+
+                    {% if not is_authenticated %}
+                    <div class="alert alert-info" role="alert">
+                        <i class="fas fa-info-circle"></i> Если вы не зарегистрированы на сайте, для вас будет автоматически создан аккаунт. После подтверждения заказа по email, вы сможете использовать этот аккаунт для отслеживания статуса заказа и размещения новых заказов.
+                    </div>
+                    {% endif %}
+
+                    <form method="POST" action="{{ url_for('main.order_lecture', lecture_id=lecture.id) }}">
+                        <div class="mb-3">
+                            <label for="name" class="form-label">Ваше имя *</label>
+                            <input type="text" class="form-control" id="name" name="name" value="{{ session.get('username', '') if is_authenticated else '' }}" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email *</label>
+                            <input type="email" class="form-control" id="email" name="email" value="{{ session.get('email', '') if is_authenticated else '' }}" {% if is_authenticated %}readonly{% endif %} required>
+                            {% if is_authenticated %}
+                            <small class="form-text text-muted">Email привязан к вашему аккаунту и не может быть изменен.</small>
+                            {% endif %}
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="phone" class="form-label">Телефон</label>
+                            <input type="tel" class="form-control" id="phone" name="phone">
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="organization" class="form-label">Организация/Номер школы</label>
+                            <input type="text" class="form-control" id="organization" name="organization">
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="message" class="form-label">Сообщение</label>
+                            <textarea class="form-control" id="message" name="message" rows="4" placeholder="Укажите предпочтительную дату, количество слушателей и другие детали"></textarea>
+                        </div>
+
+                        <div class="mb-3 form-check">
+                            <input type="checkbox" class="form-check-input" id="agreement" required>
+                            <label class="form-check-label" for="agreement">Я согласен на обработку персональных данных *</label>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary">Отправить заявку</button>
+                        <a href="{{ url_for('main.lecture_detail', slug=lecture.slug) }}" class="btn btn-outline-secondary ms-2">Отмена</a>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

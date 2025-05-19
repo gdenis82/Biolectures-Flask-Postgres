@@ -1,0 +1,31 @@
+<section
+        id="online-lecture"
+        class="hero-section container-fluid px-0  {% if block.image %}with-image{% endif %}"
+        {% if block.image %}
+        style="background-image: url('{{ url_for('static', filename='uploads/blocks/' + block.image) }}');"
+        {% endif %}>
+    <div class="container">
+        <div class="row d-flex align-items-center justify-content-center">
+            <div class="col-md-8 text-center align-items-center text-dark p-3"
+                 style="background-color: rgba(255,255,255,0.8)">
+                <h1 class="display-4">{{ block.title }}</h1>
+                <div class="lead" style="text-align: justify;">{{ block.content|safe }}</div>
+
+                {% if block.button_text and block.button_url %}
+                    <div id="online_tickets">
+                        <a href="{{ block.button_url }}" class="btn btn-primary mt-3">{{ block.button_text }}</a>
+                    </div>
+                {% endif %}
+
+            </div>
+        </div>
+        <div class="row d-flex align-items-center justify-content-center mt-4 mb-4">
+            <div class="col-md-10 text-center">
+                {% if session['is_admin'] or session['is_editor']%}
+                    <a href="/admin/homeblock/edit/?id={{ block.id }}&url=/admin/homeblock/"
+                       class="btn btn-outline-danger">Редактировать</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</section>

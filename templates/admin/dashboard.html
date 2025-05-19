@@ -1,0 +1,141 @@
+{% extends 'base.html' %}
+
+{% block title %}Административная панель - Биолекторий МГУ{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1 class="mb-4">Административная панель</h1>
+
+    <div class="row">
+        <div class="col-md-12 mb-4">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h2 class="h5 mb-0">Возможности административной панели</h2>
+                </div>
+                <div class="card-body">
+                    <p>Добро пожаловать в административную панель Биолектория МГУ. Здесь вы можете управлять всем содержимым сайта.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Users and Roles -->
+        <div class="col-md-6 mb-4">
+            <div class="card h-100">
+                <div class="card-header bg-info text-white">
+                    <h3 class="h5 mb-0">Пользователи и роли</h3>
+                </div>
+                <div class="card-body">
+                    <p>Управление пользователями и их ролями в системе.</p>
+                    <div class="list-group" >
+                        <a href="{{ url_for('admin_users.index_view') }}" class="list-group-item list-group-item-action {% if session['is_editor'] %}disabled-link{% endif %}
+">
+                            <i class="fas fa-users"></i> Пользователи
+                        </a>
+                        <a href="{{ url_for('role.index_view') }}" class="list-group-item list-group-item-action {% if session['is_editor'] %}disabled-link{% endif %}
+">
+                            <i class="fas fa-user-tag"></i> Роли
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sections and Lectures -->
+        <div class="col-md-6 mb-4">
+            <div class="card h-100">
+                <div class="card-header bg-success text-white">
+                    <h3 class="h5 mb-0">Лекции и разделы</h3>
+                </div>
+                <div class="card-body">
+                    <p>Управление разделами и лекциями на сайте.</p>
+                    <div class="list-group">
+                        <a href="{{ url_for('section.index_view') }}" class="list-group-item list-group-item-action">
+                            <i class="fas fa-folder"></i> Разделы лекций
+                        </a>
+                        <a href="{{ url_for('lecture.index_view') }}" class="list-group-item list-group-item-action">
+                            <i class="fas fa-book"></i> Лекции
+                        </a>
+                        <a href="{{ url_for('lecturetype.index_view') }}" class="list-group-item list-group-item-action">
+                            <i class="fas fa-tags"></i> Типы лекций
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Contacts and Orders -->
+        <div class="col-md-6 mb-4">
+            <div class="card h-100">
+                <div class="card-header bg-warning text-dark">
+                    <h3 class="h5 mb-0">Контакты и заказы</h3>
+                </div>
+                <div class="card-body">
+                    <p>Управление контактной информацией и заказами на лекции.</p>
+                    <div class="list-group">
+                        <a href="{{ url_for('contact.index_view') }}" class="list-group-item list-group-item-action">
+                            <i class="fas fa-address-book"></i> Контактная информация
+                        </a>
+                        <a href="{{ url_for('orderform.index_view') }}" class="list-group-item list-group-item-action">
+                            <i class="fas fa-shopping-cart"></i> Заказы на лекции
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Website Content -->
+        <div class="col-md-6 mb-4">
+            <div class="card h-100">
+                <div class="card-header bg-danger text-white">
+                    <h3 class="h5 mb-0">Содержимое сайта</h3>
+                </div>
+                <div class="card-body">
+                    <p>Управление элементами интерфейса и содержимым сайта.</p>
+                    <div class="list-group">
+                        <a href="{{ url_for('menuitem.index_view') }}" class="list-group-item list-group-item-action">
+                            <i class="fas fa-bars"></i> Пункты меню
+                        </a>
+                        <a href="{{ url_for('homeblock.index_view') }}" class="list-group-item list-group-item-action">
+                            <i class="fas fa-home"></i> Блоки на главной странице
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12 mb-4">
+            <div class="card">
+                <div class="card-header bg-secondary text-white">
+                    <h3 class="h5 mb-0">Быстрые ссылки</h3>
+                </div>
+                <div class="card-body">
+                    <div class="list-group">
+                        <a href="{{ url_for('main.index') }}" class="list-group-item list-group-item-action">
+                            <i class="fas fa-home"></i> Вернуться на главную страницу
+                        </a>
+                        <a href="{{ url_for('admin_panel.index') }}" class="list-group-item list-group-item-action">
+                            <i class="fas fa-tachometer-alt"></i> Стандартная панель администратора
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+<style>
+    .card-header {
+        font-weight: bold;
+    }
+    .list-group-item i {
+        margin-right: 10px;
+    }
+</style>
+{% endblock %}
