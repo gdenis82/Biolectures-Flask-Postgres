@@ -136,7 +136,7 @@ biolectures/
 
 1. Клонировать репозиторий:
    ```
-   git clone https://github.com/yourusername/biolectures.git
+   git clone https://github.com/gdenis82/Biolectures-Flask-Postgres.git
    cd biolectures
    ```
 
