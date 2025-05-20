@@ -6,6 +6,7 @@ from dotenv import load_dotenv
 from apscheduler.schedulers.background import BackgroundScheduler
 from apscheduler.triggers.interval import IntervalTrigger
 from app import db
+from auth.views import admin_required
 
 load_dotenv()
 
@@ -108,6 +109,7 @@ def update_lecture_descriptions():
         _update_lecture_descriptions_impl()
 
 @textgen_bp.route('/rewrite', methods=['POST'])
+@admin_required
 def rewrite_text():
     """
     Принимает JSON: { "base_text": "...", "task_type": "..." }
