@@ -1,5 +1,6 @@
 import os
 import re
+import spacy
 import traceback
 from datetime import datetime
 from flask import Flask, render_template
@@ -15,6 +16,8 @@ from config import config
 db = SQLAlchemy()
 migrate = Migrate()
 mail = Mail()
+
+nlp_ru = spacy.load("ru_core_news_sm")
 
 # Function to initialize roles
 def init_roles():
@@ -209,26 +212,18 @@ def create_app(config_name=None):
             return {'menu_items': []}
 
     @app.template_filter('commas')
-    def replace_spaces_with_commas(value):
-        if not value:
+    def replace_spaces_with_commas(text):
+        if not text:
             return ''
 
-        # Шаблон для предлогов.
-        # \b и \s используются для учета границ слова и пробелов.
+        doc = nlp_ru(text)
 
-        prepositions = r'\b(без|в|до|для|за|из|из-за|из-под|к|на|над|о|об|от|по|под|при|про|с|у|через|вне|вместо|между|ради|около|перед|после|вдоль|поперек|возле|вблизи|вглубь|навстречу|насчет|сверх|среди|напротив|посредством|about|above|across|after|against|along|among|around|at|before|behind|below|beneath|beside|between|beyond|by|down|during|except|for|from|in|inside|into|near|of|off|on|onto|out|outside|over|past|since|through|throughout|till|to|toward|under|underneath|until|up|upon|with|within|without)\b'
+        # Исключаем предлоги и союзы
+        excluded_pos = {'ADP', 'CCONJ', 'SCONJ'}  # предлоги + сочинительные и подчинительные союзы
+        words = [token.text for token in doc if token.pos_ not in excluded_pos and token.is_alpha]
 
-        # Убираем предлоги
-        filtered_text = re.sub(prepositions, '', value, flags=re.IGNORECASE)
-
-        # Оставляем только буквы RU и ENG, убираем всё остальное
-        filtered_text = re.sub(r'[^a-zA-Zа-яА-Я]', ' ', filtered_text)
-
-        # Убираем лишние пробелы
-        filtered_text = re.sub(r'\s+', ' ', filtered_text).strip()
-
-        # Меняем пробелы на запятые
-        return ', '.join(filtered_text.split())
+        # Возвращаем через запятую
+        return ', '.join(words)
 
     return app
 
