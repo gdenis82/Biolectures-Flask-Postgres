@@ -14,3 +14,4 @@ gunicorn==21.2.0
 openai
 APScheduler==3.10.4
 spacy
+langdetect
