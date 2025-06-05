@@ -1,6 +1,7 @@
 import os
 import re
 import spacy
+from langdetect import detect
 import traceback
 from datetime import datetime
 from flask import Flask, render_template
@@ -17,7 +18,10 @@ db = SQLAlchemy()
 migrate = Migrate()
 mail = Mail()
 
+
+# Загружаем spaCy модели один раз
 nlp_ru = spacy.load("ru_core_news_sm")
+nlp_en = spacy.load("en_core_web_sm")
 
 # Function to initialize roles
 def init_roles():
@@ -216,13 +220,30 @@ def create_app(config_name=None):
         if not text:
             return ''
 
-        doc = nlp_ru(text)
+        # Автоопределение языка
+        try:
+            lang = detect(text)
+        except:
+            lang = 'ru'  # fallback по умолчанию
 
-        # Исключаем предлоги и союзы
-        excluded_pos = {'ADP', 'CCONJ', 'SCONJ'}  # предлоги + сочинительные и подчинительные союзы
+        # Выбор модели
+        nlp = nlp_ru if lang == 'ru' else nlp_en
+        doc = nlp(text)
+
+        # Части речи, которые нужно исключить
+        excluded_pos = {
+            'ADP',  # предлоги
+            'CCONJ',  # сочинительные союзы
+            'SCONJ',  # подчинительные союзы
+            'PRON',  # местоимения
+            'PART',  # частицы (типа бы, же, ли)
+            'DET',  # определители (this, that, etc.)
+            'INTJ'  # междометия
+        }
+
+        # Фильтруем токены
         words = [token.text for token in doc if token.pos_ not in excluded_pos and token.is_alpha]
 
-        # Возвращаем через запятую
         return ', '.join(words)
 
     return app
