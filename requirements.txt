@@ -13,3 +13,4 @@ email-validator==2.1.0
 gunicorn==21.2.0
 openai
 APScheduler==3.10.4
+spacy
