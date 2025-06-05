@@ -68,7 +68,7 @@ def _update_lecture_descriptions_impl():
     now = datetime.datetime.utcnow()
 
     # Find lectures that need description update (updated more than 7 days ago)
-    seven_days_ago = now - datetime.timedelta(days=1)
+    seven_days_ago = now - datetime.timedelta(days=15)
     lectures_to_update = Lecture.query.filter(
         Lecture.updated_at <= seven_days_ago,
         Lecture.description.isnot(None),
@@ -148,7 +148,7 @@ def init_scheduler(state):
     scheduler.add_job(
         func=update_lecture_descriptions,
         trigger='date',
-        run_date=datetime.datetime.now() + datetime.timedelta(days=15),
+        run_date=datetime.datetime.now() + datetime.timedelta(days=1),
         id='initial_update_lecture_descriptions',
         name='Initial update of lecture descriptions'
     )
