@@ -31,7 +31,7 @@
             <meta name="description" content="{{ lecture.description|striptags|truncate(250) }}">
         {% endblock %}
         <meta name="keywords"
-              content=" {{ lecture.title|commas }}, {{ lecture.section.name|commas }}, биолекторий, лекции, биология, МГУ, наука, образование, школа, наука, зоологический, музей, дети">
+              content=" {{ lecture.title|commas }}, биолекторий, лекции, биология, МГУ, образование, школа, наука, зоологический, музей, дети">
         <link rel="canonical" href="{{ url_for('main.lecture_detail', slug=lecture.slug, _external=True) }}">
         <meta property="og:type" content="article">
         <meta property="og:url" content="{{ url_for('main.lecture_detail', slug=lecture.slug, _external=True) }}">
@@ -58,7 +58,7 @@
         <!-- Section-specific SEO Meta Tags -->
         <meta name="description"
               content="{{ section.description|striptags|truncate(250) if section.description else 'Раздел лекций: ' + section.name + ' - Биолекторий - Зоологический Музей МГУ' }}">
-        <meta name="keywords" content="{{ section.name|commas }}, биолекторий, лекции, биология, МГУ, наука, образование, школа, наука, зоологический, музей, дети">
+        <meta name="keywords" content="{{ section.name|commas }}, биолекторий, лекции, биология, МГУ, наука, образование, школа, зоологический, музей, дети">
         <link rel="canonical" href="{{ url_for('main.section_detail', slug=section.slug, _external=True) }}">
         <meta property="og:type" content="website">
         <meta property="og:url" content="{{ url_for('main.section_detail', slug=section.slug, _external=True) }}">
