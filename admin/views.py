@@ -379,3 +379,24 @@ def index():
 
     # Render the admin dashboard template
     return render_template('admin/dashboard.html')
+
+# Routes for the admin blueprint
+@admin_bp.route('/monitor')
+def monitor():
+    """Admin dashboard"""
+    # Check if user is authenticated and has admin, editor role, or is a lecturer with admin access
+    if 'user_id' not in session:
+        flash('You need to be logged in as an admin to access this area.', 'error')
+        return redirect(url_for('auth.login', next=request.url))
+
+    user = User.query.get(session['user_id'])
+    if not user or (
+        not user.has_role('admin') and
+        not user.has_role('editor') and
+        not (user.has_role('lecturer') and user.can_access_admin)
+    ):
+        flash('You do not have permission to access this page.', 'danger')
+        return redirect(url_for('main.index'))
+
+    # Render the admin dashboard template
+    return render_template('admin/monitor.html')
