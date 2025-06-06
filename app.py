@@ -165,6 +165,9 @@ def create_app(config_name=None):
     from views.main import user_bp
     app.register_blueprint(user_bp)
 
+    from views.apis import api_bp
+    app.register_blueprint(api_bp)
+
     from admin.views import admin_bp
     app.register_blueprint(admin_bp)
 
@@ -249,6 +252,6 @@ def create_app(config_name=None):
     return app
 
 
-if __name__ == '__main__':
-    app = create_app()
-    app.run(host='0.0.0.0', port=5000, debug=True)
+# if __name__ == '__main__':
+#     app = create_app()
+#     app.run(host='0.0.0.0', port=5000, debug=True)
